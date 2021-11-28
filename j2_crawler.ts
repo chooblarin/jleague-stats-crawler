@@ -1,4 +1,5 @@
 import { Browser } from "https://deno.land/x/puppeteer@9.0.2/mod.ts";
+import { extractRanking } from "./scrape_ranking.ts";
 
 // Jリーグデータサイト順位表
 const baseUrl = "https://data.j-league.or.jp/SFRT01/";
@@ -59,5 +60,5 @@ export async function crawlSectionPageContent(browser: Browser, sectionId: strin
 
   await page.close();
 
-  return html;
+  return extractRanking(html);
 }
