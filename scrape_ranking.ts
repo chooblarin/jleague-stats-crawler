@@ -39,11 +39,21 @@ export function extractRanking(htmlString: string) {
 
     const points = row.find(".wd03").text().trim();
 
+    const parsedRank = parseInt(rank);
+    if (isNaN(parsedRank)) {
+      throw new Error(`Rank of ${id} '${rank}' is not valid number format`);
+    }
+
+    const parsedPoints = parseInt(points);
+    if (isNaN(parsedPoints)) {
+      throw new Error(`Rank of ${id} '${rank}' is not valid number format`);
+    }
+
     results.push({
       id,
-      rank: parseInt(rank),
+      rank: parsedRank,
       name,
-      points: parseInt(points),
+      points: parsedPoints,
     });
   }
 
