@@ -4,8 +4,10 @@ import { extractRanking } from "./scrape_ranking.ts";
 // Jリーグデータサイト順位表
 const baseUrl = "https://data.j-league.or.jp/SFRT01/";
 
+const yearId = "2022";
+
 // J2リーグのID
-const j2CompId = "493"
+const j2CompId = "522"; // 2022年
 
 export async function crawlAllSections(browser: Browser) {
   const page = await browser.newPage();
@@ -13,7 +15,7 @@ export async function crawlAllSections(browser: Browser) {
   await page.goto(baseUrl, { waitUntil: "networkidle2" });
 
   await page.waitForSelector("#yearId");
-  await page.select("#yearId", "2021");
+  await page.select("#yearId", yearId);
   await page.waitForTimeout(1000);
 
   await page.select("#competitionId", j2CompId);
@@ -24,8 +26,11 @@ export async function crawlAllSections(browser: Browser) {
   const options = await page.$$("#competitionSectionId option");
   for (let i = 0; i < options.length; i += 1) {
     const opt = options[i];
-    const label = await page.evaluate(el => el.text, opt) as string;
-    const value = await page.evaluate(el => el.getAttribute("value"), opt) as string;
+    const label = (await page.evaluate((el) => el.text, opt)) as string;
+    const value = (await page.evaluate(
+      (el) => el.getAttribute("value"),
+      opt
+    )) as string;
 
     // 0は"最新節"の値なので除外
     if (value && value !== "0") {
@@ -38,13 +43,16 @@ export async function crawlAllSections(browser: Browser) {
   return sections;
 }
 
-export async function crawlSectionPageContent(browser: Browser, sectionId: string) {
+export async function crawlSectionPageContent(
+  browser: Browser,
+  sectionId: string
+) {
   const page = await browser.newPage();
 
   await page.goto(baseUrl, { waitUntil: "networkidle2" });
 
   await page.waitForSelector("#yearId");
-  await page.select("#yearId", "2021");
+  await page.select("#yearId", yearId);
   await page.waitForTimeout(1000);
 
   await page.select("#competitionId", j2CompId);
